@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobConnect | Admin Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fa;
+            color: #202938;
+        }
+
+        header {
+            background: #172554;
+            color: white;
+            padding: 22px 6%;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        header p {
+            margin-bottom: 0;
+            color: #cbd5e1;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 18px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .card h3 {
+            margin: 0 0 12px;
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        .number {
+            font-size: 30px;
+            font-weight: bold;
+            color: #172554;
+        }
+
+        section {
+            margin-top: 30px;
+        }
+
+        h2 {
+            color: #172554;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #e8eefc;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .pending {
+            color: #b45309;
+        }
+
+        .approved {
+            color: #15803d;
+        }
+
+        .rejected {
+            color: #dc2626;
+        }
+
+        .empty {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            color: #64748b;
+        }
+
+        @media (max-width: 600px) {
+            table {
+                font-size: 13px;
+            }
+
+            th, td {
+                padding: 9px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>JobConnect Admin Dashboard</h1>
+    <p>Welcome, {{ request.user.email }}</p>
+</header>
+
+<main>
+
+    <h2>Dashboard Overview</h2>
+
+    
+<div style="margin: 20px 0; display: flex; gap: 12px; flex-wrap: wrap;">
+
+    <a href="{% url 'admin_pending_jobs' %}"
+       style="display: inline-block;
+              background: #172554;
+              color: white;
+              padding: 12px 20px;
+              border-radius: 7px;
+              text-decoration: none;
+              font-weight: bold;">
+        Review Pending Jobs ({{ pending_jobs }})
+    </a>
+
+    <a href="{% url 'admin_users' %}"
+       style="display: inline-block;
+              background: #15803d;
+              color: white;
+              padding: 12px 20px;
+              border-radius: 7px;
+              text-decoration: none;
+              font-weight: bold;">
+        Manage Users
+    </a>
+
+</div>
+
+
+    <div class="stats">
+
+        <div class="card">
+            <h3>Total Users</h3>
+            <div class="number">{{ total_users }}</div>
+        </div>
+
+        <div class="card">
+            <h3>Job Seekers</h3>
+            <div class="number">{{ total_seekers }}</div>
+        </div>
+
+        <div class="card">
+            <h3>Recruiters</h3>
+            <div class="number">{{ total_recruiters }}</div>
+        </div>
+
+        <div class="card">
+            <h3>Total Jobs</h3>
+            <div class="number">{{ total_jobs }}</div>
+        </div>
+
+        <div class="card">
+            <h3>Pending Jobs</h3>
+            <div class="number">{{ pending_jobs }}</div>
+        </div>
+
+        <div class="card">
+            <h3>Approved Jobs</h3>
+            <div class="number">{{ approved_jobs }}</div>
+        </div>
+
+        <div class="card">
+            <h3>Rejected Jobs</h3>
+            <div class="number">{{ rejected_jobs }}</div>
+        </div>
+
+        <div class="card">
+            <h3>Total Applications</h3>
+            <div class="number">{{ total_applications }}</div>
+        </div>
+
+    </div>
+
+    <section>
+        <h2>Recent Jobs</h2>
+
+        {% if recent_jobs %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Job Title</th>
+                    <th>Company</th>
+                    <th>Recruiter</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for job in recent_jobs %}
+                <tr>
+                    <td>{{ job.title }}</td>
+                    <td>
+                        {% if job.recruiter.company %}
+                            {{ job.recruiter.company.name }}
+                        {% else %}
+                            Not Available
+                        {% endif %}
+                    </td>
+                    <td>{{ job.recruiter.user.email }}</td>
+                    <td class="status
+                        {% if job.approval_status == 'PENDING' %}pending
+                        {% elif job.approval_status == 'APPROVED' %}approved
+                        {% else %}rejected{% endif %}">
+                        {{ job.get_approval_status_display }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="empty">No jobs available yet.</p>
+        {% endif %}
+    </section>
+
+    <section>
+        <h2>Application Statistics</h2>
+
+        {% if application_stats %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Application Status</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in application_stats %}
+                <tr>
+                    <td>{{ item.status }}</td>
+                    <td>{{ item.total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="empty">No applications available yet.</p>
+        {% endif %}
+    </section>
+
+</main>
+
+</body>
+</html>

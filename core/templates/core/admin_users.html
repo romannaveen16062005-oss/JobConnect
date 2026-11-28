@@ -1,0 +1,214 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobConnect | User Management</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 30px 20px;
+            font-family: Arial, sans-serif;
+            background: #f4f6fa;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: auto;
+        }
+
+        h1 { color: #172554; }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        input, select, button {
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        button {
+            background: #172554;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            background: white;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+
+        th, td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th { background: #e8eefc; }
+
+        .active { color: #15803d; font-weight: bold; }
+        .inactive { color: #dc2626; font-weight: bold; }
+
+        .pagination {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 25px 0;
+        }
+
+        .pagination a {
+            text-decoration: none;
+            color: #2563eb;
+        }
+
+        .empty {
+            padding: 25px;
+            text-align: center;
+            color: #64748b;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <a class="back" href="{% url 'admin_dashboard' %}">
+        ← Back to Dashboard
+    </a>
+
+    <h1>User Management</h1>
+    <p>View and filter registered JobConnect users.</p>
+
+    <form method="GET" class="filters">
+
+        <input
+            type="search"
+            name="q"
+            placeholder="Search email or name"
+            value="{{ keyword }}"
+        >
+
+        <select name="role">
+            <option value="">All Roles</option>
+
+            {% for value, label in roles %}
+            <option value="{{ value }}"
+                {% if selected_role == value %}selected{% endif %}>
+                {{ label }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <select name="status">
+            <option value="">All Statuses</option>
+            <option value="active"
+                {% if selected_status == "active" %}selected{% endif %}>
+                Active
+            </option>
+            <option value="inactive"
+                {% if selected_status == "inactive" %}selected{% endif %}>
+                Inactive
+            </option>
+        </select>
+
+        <button type="submit">Apply Filters</button>
+
+        <a href="{% url 'admin_users' %}">Clear</a>
+    </form>
+
+    <div class="table-wrapper">
+
+        {% if page_obj.object_list %}
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Joined</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for user in page_obj %}
+                <tr>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.first_name|default:"-" }}</td>
+                    <td>{{ user.last_name|default:"-" }}</td>
+                    <td>{{ user.get_role_display }}</td>
+                    <td>
+                        {% if user.is_active %}
+                            <span class="active">Active</span>
+                        {% else %}
+                            <span class="inactive">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ user.date_joined|date:"d M Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% else %}
+            <div class="empty">No users found.</div>
+        {% endif %}
+
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <div class="pagination">
+
+        {% if page_obj.has_previous %}
+            <a href="?q={{ keyword|urlencode }}&role={{ selected_role|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.previous_page_number }}">
+                Previous
+            </a>
+        {% endif %}
+
+        <span>
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?q={{ keyword|urlencode }}&role={{ selected_role|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.next_page_number }}">
+                Next
+            </a>
+        {% endif %}
+
+    </div>
+    {% endif %}
+
+</div>
+</body>
+</html>
