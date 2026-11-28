@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,7 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'REDACTED_SECRET_KEY'
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
+
+if not SECRET_KEY:
+    raise ValueError("DJANGO_SECRET_KEY environment variable is missing.")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -42,6 +46,7 @@ INSTALLED_APPS = [
     'recruiters',
     'jobs',
     'applications',
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -132,3 +137,6 @@ MAILERS = {
 }
 
 AUTH_USER_MODEL = 'accounts.User'
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"

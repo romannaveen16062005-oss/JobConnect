@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Resume | JobConnect</title>
+</head>
+<body>
+    <h1>Upload Your Resume</h1>
+
+    <p>
+        <a href="{% url 'my_profile' %}">Back to My Profile</a>
+    </p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Upload Resume</button>
+    </form>
+
+    <p>Allowed formats: PDF, DOC, DOCX. Maximum size: 5 MB.</p>
+
+    <h2>Your Uploaded Resumes</h2>
+
+    {% for resume in resumes %}
+        <div>
+            <strong>{{ resume.title }}</strong>
+            {% if resume.is_default %}
+                &mdash; Default Resume
+            {% endif %}
+            <p>Uploaded: {{ resume.uploaded_at|date:"d M Y" }}</p>
+        </div>
+    {% empty %}
+        <p>You have not uploaded a resume yet.</p>
+    {% endfor %}
+</body>
+</html>

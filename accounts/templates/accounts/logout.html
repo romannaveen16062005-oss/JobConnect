@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head><title>Logout | JobConnect</title></head>
+<body>
+    <h2>Logout from JobConnect?</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Confirm Logout</button>
+    </form>
+    <a href="{% url 'job_list' %}">Cancel</a>
+</body>
+</html>

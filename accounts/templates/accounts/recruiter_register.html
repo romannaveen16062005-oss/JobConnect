@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruiter Registration | JobConnect</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 550px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        }
+
+        h1, h2 {
+            color: #222;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        h2 {
+            margin-top: 25px;
+            font-size: 19px;
+        }
+
+        label {
+            display: block;
+            margin: 14px 0 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 11px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 25px;
+            background: #2457d6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .messages {
+            color: #b42318;
+            margin-bottom: 15px;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Recruiter Registration</h1>
+    <p>Create your company recruiter account.</p>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <h2>Personal Details</h2>
+
+        <label>First Name *</label>
+        <input type="text" name="first_name" required>
+
+        <label>Last Name</label>
+        <input type="text" name="last_name">
+
+        <label>Email *</label>
+        <input type="email" name="email" required>
+
+        <label>Password *</label>
+        <input type="password" name="password"
+               minlength="8" required>
+
+        <label>Confirm Password *</label>
+        <input type="password" name="confirm_password"
+               minlength="8" required>
+
+        <label>Designation</label>
+        <input type="text" name="designation"
+               placeholder="HR Manager">
+
+        <label>Phone</label>
+        <input type="tel" name="phone" maxlength="15">
+
+        <h2>Company Details</h2>
+
+        <label>Company Name *</label>
+        <input type="text" name="company_name" required>
+
+        <label>Industry</label>
+        <input type="text" name="industry"
+               placeholder="Information Technology">
+
+        <label>Company Location</label>
+        <input type="text" name="location"
+               placeholder="Coimbatore">
+
+        <button type="submit">
+            Register as Recruiter
+        </button>
+    </form>
+
+    <div class="login-link">
+        Already registered?
+        <a href="{% url 'login' %}">Login here</a>
+    </div>
+
+</div>
+
+</body>
+</html>

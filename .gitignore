@@ -8,3 +8,9 @@ staticfiles/
 .vscode/
 
 db_backup_*.sqlite3
+
+# Private uploaded resumes
+resumes/
+
+# Local source backup archive
+JobConnect_source.zip

@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Applications | JobConnect</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; color: #222; }
+        header { background: #172554; color: white; padding: 22px 8%; }
+        main { max-width: 950px; margin: 35px auto; padding: 0 20px; }
+        .card { background: white; padding: 22px; margin: 16px 0; border-radius: 10px; }
+        .status { display: inline-block; padding: 7px 12px; background: #dbeafe; border-radius: 20px; }
+        a { color: #2563eb; text-decoration: none; }
+        .empty { background: white; padding: 30px; border-radius: 10px; text-align: center; }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>JobConnect</h2>
+        <p>My Applications</p>
+    </header>
+    <main>
+        <a href="{% url 'job_list' %}">&larr; Back to Jobs</a>
+        <h1>My Applications</h1>
+        {% if applications %}
+            {% for application in applications %}
+                <div class="card">
+                    <h2>{{ application.job.title }}</h2>
+                    <p><strong>Company:</strong> {{ application.job.recruiter.company.name|default:"Not specified" }}</p>
+                    <p><strong>Location:</strong> {{ application.job.location }}</p>
+                    <p><strong>Applied on:</strong> {{ application.applied_at|date:"d M Y, h:i A" }}</p>
+                    <p><strong>Status:</strong> <span class="status">{{ application.get_status_display }}</span></p>
+                    <a href="{% url 'job_detail' application.job.id %}">View Job</a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty">
+                <h2>No applications yet</h2>
+                <p>Apply for a job to see it listed here.</p>
+                <a href="{% url 'job_list' %}">Browse Jobs</a>
+            </div>
+        {% endif %}
+    </main>
+</body>
+</html>

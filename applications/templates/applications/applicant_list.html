@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Applicants | JobConnect</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 25px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .application {
+            background: white;
+            padding: 20px;
+            margin-bottom: 18px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        input,
+        select,
+        button {
+            padding: 10px;
+            margin: 5px 0;
+        }
+
+        button {
+            background: #2457d6;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .messages {
+            color: #2457d6;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Applicant Management</h1>
+
+        <p>
+            <a href="{% url 'recruiter_dashboard' %}">
+                Back to Recruiter Dashboard
+            </a>
+        </p>
+
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <h2>Applications Received</h2>
+
+        {% for application in applications %}
+
+            <div class="application">
+
+                <h3>
+                    {{ application.applicant.get_full_name|default:application.applicant.email }}
+                </h3>
+
+                <p>
+                    Email: {{ application.applicant.email }}
+                </p>
+
+                <p>
+                    Job: {{ application.job.title }}
+                </p>
+
+                <p>
+                    Applied:
+                    {{ application.applied_at|date:"d M Y" }}
+                </p>
+
+                <p>
+                    Current Status:
+                    <strong>
+                        {{ application.get_status_display }}
+                    </strong>
+                </p>
+
+                {% if application.cover_letter %}
+                    <h4>Cover Letter</h4>
+
+                    <p>
+                        {{ application.cover_letter|linebreaksbr }}
+                    </p>
+                {% endif %}
+
+                <!-- Applicant Resume Download -->
+
+                {% if application.resume %}
+
+                    <p>
+                        Resume:
+
+                        <a href="{% url 'download_applicant_resume' application.id %}">
+                            Download Resume
+                        </a>
+                    </p>
+
+                {% else %}
+
+                    <p>
+                        Applicant has not attached a resume.
+                    </p>
+
+                {% endif %}
+
+                <!-- Application Status Update -->
+
+                <form
+                    method="POST"
+                    action="{% url 'update_application_status' application.id %}"
+                >
+
+                    {% csrf_token %}
+
+                    <label>
+                        Update Application Status:
+                    </label>
+
+                    <select name="status" required>
+
+                        {% for value, label in status_choices %}
+
+                            <option value="{{ value }}">
+                                {{ label }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                    <br>
+
+                    <label>
+                        Note (Optional):
+                    </label>
+
+                    <input
+                        type="text"
+                        name="note"
+                        placeholder="Add a note"
+                    >
+
+                    <br>
+
+                    <button type="submit">
+                        Update Status
+                    </button>
+
+                </form>
+
+            </div>
+
+        {% empty %}
+
+            <p>
+                No applicants have applied to your jobs yet.
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+</body>
+</html>

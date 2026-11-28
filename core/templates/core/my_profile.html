@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | JobConnect</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; color: #222; }
+        header { background: #172554; color: white; padding: 22px 8%; }
+        main { max-width: 850px; margin: 35px auto; padding: 20px; }
+        .card { background: white; padding: 25px; border-radius: 10px; }
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0 18px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; }
+        button { background: #2563eb; color: white; border: 0; padding: 12px 24px; border-radius: 6px; cursor: pointer; }
+        a { color: #2563eb; }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>JobConnect</h2>
+        <p>Edit My Profile</p>
+    </header>
+
+    <main>
+        <div class="card">
+            <h1>Personal Information</h1>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <label>First Name</label>
+                <input type="text" name="first_name" value="{{ user.first_name }}">
+
+                <label>Last Name</label>
+                <input type="text" name="last_name" value="{{ user.last_name }}">
+
+                <label>Phone</label>
+                <input type="text" name="phone" value="{{ profile.phone }}">
+
+                <label>Location</label>
+                <input type="text" name="location" value="{{ profile.location }}">
+
+                <label>Professional Headline</label>
+                <input type="text" name="headline" value="{{ profile.headline }}">
+
+                <label>Professional Summary</label>
+                <textarea name="summary" rows="5">{{ profile.summary }}</textarea>
+
+                <button type="submit">Save Profile</button>
+            </form>
+
+            <p><a href="{% url 'job_list' %}">Back to Jobs</a></p>
+        </div>
+    </main>
+</body>
+</html>
